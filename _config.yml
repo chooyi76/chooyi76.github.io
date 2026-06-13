@@ -11,8 +11,7 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
 
-author:
-  name: chooyi76
+author: chooyi76
 github_username: chooyi76
 
 minima:
