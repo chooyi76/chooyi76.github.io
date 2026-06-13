@@ -1,0 +1,28 @@
+title: chooyi76 Blog
+description: 개발 기록을 남기는 블로그입니다.
+url: "https://chooyi76.github.io"
+baseurl: ""
+lang: ko-KR
+timezone: Asia/Seoul
+
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+author:
+  name: chooyi76
+github_username: chooyi76
+
+minima:
+  skin: auto
+  social_links:
+    - platform: github
+      user_url: "https://github.com/chooyi76"
+
+show_excerpts: true
+permalink: /:categories/:year/:month/:day/:title/
+markdown: kramdown
+kramdown:
+  input: GFM
