@@ -9,6 +9,21 @@ const getSlugFromHash = () => {
   return match?.[1] ?? posts[0]?.slug ?? "";
 };
 
+const CATEGORY_LABELS: Record<string, string> = {
+  blog: "블로그",
+  "book-review": "독후감"
+};
+
+const categoryLabel = (category: string) =>
+  CATEGORY_LABELS[category] ?? category;
+
+const RatingStars = ({ rating }: { rating: number }) => (
+  <span className="rating-stars" aria-label={`평점 ${rating}/5`}>
+    {"★".repeat(rating)}
+    {"☆".repeat(Math.max(0, 5 - rating))}
+  </span>
+);
+
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat("ko-KR", {
     year: "numeric",
@@ -18,6 +33,7 @@ const formatDate = (value: string) =>
 
 function App() {
   const [selectedSlug, setSelectedSlug] = useState(getSlugFromHash);
+  const [activeCategory, setActiveCategory] = useState("all");
   const [activeTag, setActiveTag] = useState("all");
   const [query, setQuery] = useState("");
 
@@ -35,6 +51,11 @@ function App() {
     []
   );
 
+  const categories = useMemo(
+    () => Array.from(new Set(sortedPosts.map((post) => post.category))).sort(),
+    [sortedPosts]
+  );
+
   const tags = useMemo(
     () => Array.from(new Set(sortedPosts.flatMap((post) => post.tags))).sort(),
     [sortedPosts]
@@ -44,6 +65,8 @@ function App() {
     const normalizedQuery = query.trim().toLowerCase();
 
     return sortedPosts.filter((post) => {
+      const matchesCategory =
+        activeCategory === "all" || post.category === activeCategory;
       const matchesTag = activeTag === "all" || post.tags.includes(activeTag);
       const matchesQuery =
         normalizedQuery.length === 0 ||
@@ -52,9 +75,9 @@ function App() {
           .toLowerCase()
           .includes(normalizedQuery);
 
-      return matchesTag && matchesQuery;
+      return matchesCategory && matchesTag && matchesQuery;
     });
-  }, [activeTag, query, sortedPosts]);
+  }, [activeCategory, activeTag, query, sortedPosts]);
 
   const selectedPost =
     sortedPosts.find((post) => post.slug === selectedSlug) ?? sortedPosts[0];
@@ -107,13 +130,30 @@ function App() {
         <section className="content-column" aria-label="Blog content">
           <article className="post-view">
             <div className="post-kicker">
-              <span>{selectedPost.category}</span>
+              <span>{categoryLabel(selectedPost.category)}</span>
               <time dateTime={selectedPost.date}>
                 {formatDate(selectedPost.date)}
               </time>
             </div>
             <h2>{selectedPost.title}</h2>
             <p className="post-summary">{selectedPost.summary}</p>
+            {selectedPost.category === "book-review" && (
+              <div className="book-info">
+                {selectedPost.bookTitle && (
+                  <span className="book-info-title">
+                    {selectedPost.bookTitle}
+                  </span>
+                )}
+                {selectedPost.bookAuthor && (
+                  <span className="book-info-author">
+                    {selectedPost.bookAuthor}
+                  </span>
+                )}
+                {selectedPost.rating != null && (
+                  <RatingStars rating={selectedPost.rating} />
+                )}
+              </div>
+            )}
             <div className="tag-row" aria-label="Selected post tags">
               {selectedPost.tags.map((tag) => (
                 <span className="tag" key={tag}>
@@ -143,6 +183,26 @@ function App() {
                   type="search"
                 />
               </label>
+            </div>
+
+            <div className="filter-row" aria-label="Category filters">
+              <button
+                className={activeCategory === "all" ? "active" : ""}
+                onClick={() => setActiveCategory("all")}
+                type="button"
+              >
+                전체
+              </button>
+              {categories.map((category) => (
+                <button
+                  className={activeCategory === category ? "active" : ""}
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  type="button"
+                >
+                  {categoryLabel(category)}
+                </button>
+              ))}
             </div>
 
             <div className="filter-row" aria-label="Tag filters">
@@ -180,8 +240,16 @@ function App() {
 function PostCard({ post }: { post: BlogPost }) {
   return (
     <a className="post-card" href={`#/posts/${post.slug}`}>
-      <span className="post-card-date">{formatDate(post.date)}</span>
+      <span className="post-card-date">
+        {categoryLabel(post.category)} · {formatDate(post.date)}
+      </span>
       <h3>{post.title}</h3>
+      {post.category === "book-review" && post.bookTitle && (
+        <p className="post-card-book">
+          {post.bookTitle}
+          {post.bookAuthor ? ` · ${post.bookAuthor}` : ""}
+        </p>
+      )}
       <p>{post.summary}</p>
       <span className="post-card-link">읽기</span>
     </a>

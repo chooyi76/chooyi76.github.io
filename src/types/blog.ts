@@ -6,4 +6,7 @@ export type BlogPost = {
   tags: string[];
   summary: string;
   content: string;
+  bookTitle?: string;
+  bookAuthor?: string;
+  rating?: number;
 };

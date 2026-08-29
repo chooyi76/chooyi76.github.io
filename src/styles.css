@@ -211,6 +211,30 @@ input {
   gap: 8px;
 }
 
+.book-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: #405260;
+  font-size: 0.95rem;
+}
+
+.book-info-title {
+  font-weight: 800;
+  color: #17202a;
+}
+
+.book-info-author {
+  color: #637381;
+}
+
+.rating-stars {
+  color: #b45309;
+  letter-spacing: 1px;
+}
+
 .tag {
   border: 1px solid rgba(15, 118, 110, 0.22);
   border-radius: 999px;
@@ -374,6 +398,13 @@ input {
   margin: 0;
   color: #4f5f6b;
   line-height: 1.6;
+}
+
+.post-card p.post-card-book {
+  margin: 0 0 8px;
+  color: #b45309;
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .post-card-link {
