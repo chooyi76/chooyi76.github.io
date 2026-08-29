@@ -61,6 +61,8 @@ export const posts: BlogPost[] = Object.values(postModules).map((raw) => {
     bookTitle: typeof data.bookTitle === "string" ? data.bookTitle : undefined,
     bookAuthor:
       typeof data.bookAuthor === "string" ? data.bookAuthor : undefined,
-    rating: typeof data.rating === "number" ? data.rating : undefined
+    rating: typeof data.rating === "number" ? data.rating : undefined,
+    cover: typeof data.cover === "string" ? data.cover : undefined,
+    isbn: typeof data.isbn === "string" ? data.isbn : undefined
   };
 });

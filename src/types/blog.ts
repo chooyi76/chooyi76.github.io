@@ -9,4 +9,6 @@ export type BlogPost = {
   bookTitle?: string;
   bookAuthor?: string;
   rating?: number;
+  cover?: string;
+  isbn?: string;
 };
