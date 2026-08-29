@@ -33,43 +33,41 @@ npm run preview
 
 ## 새 글 작성하기
 
-1. `src/content/posts/new-post.md` 파일을 만듭니다.
-2. `src/data/posts.ts`에서 Markdown 파일을 import합니다.
-3. `posts` 배열에 글 메타데이터를 추가합니다.
+`src/content/posts/`에 Markdown 파일을 만들고, 맨 위에 frontmatter 블록으로
+메타데이터를 채우면 끝입니다. `src/data/posts.ts`가 이 폴더를 자동으로 스캔하므로
+별도 등록 작업이 필요 없습니다.
 
-```ts
-import newPost from "../content/posts/new-post.md?raw";
+```md
+---
+slug: new-post
+title: 새 글 제목
+date: 2026-06-13
+category: blog
+tags: [react, typescript]
+summary: 글 목록에 표시될 짧은 설명
+---
 
-{
-  slug: "new-post",
-  title: "새 글 제목",
-  date: "2026-06-13",
-  category: "blog",
-  tags: ["react", "typescript"],
-  summary: "글 목록에 표시될 짧은 설명",
-  content: newPost
-}
+본문 내용을 Markdown으로 작성합니다.
 ```
 
 ## 독후감 작성하기
 
-블로그 글과 동일한 방식으로 작성하되, `category`를 `"book-review"`로 지정하고
+블로그 글과 동일한 방식으로 작성하되, `category`를 `book-review`로 지정하고
 `bookTitle`, `bookAuthor`, `rating`(1~5) 필드를 추가로 채웁니다. 목록/필터 화면에서
 "독후감" 카테고리로 자동 분류됩니다.
 
-```ts
-import bookReview from "../content/posts/new-book-review.md?raw";
+```md
+---
+slug: new-book-review
+title: 『책 제목』을 읽고
+date: 2026-06-13
+category: book-review
+tags: [book]
+summary: 글 목록에 표시될 짧은 설명
+bookTitle: 책 제목
+bookAuthor: 저자
+rating: 4
+---
 
-{
-  slug: "new-book-review",
-  title: "『책 제목』을 읽고",
-  date: "2026-06-13",
-  category: "book-review",
-  tags: ["book"],
-  summary: "글 목록에 표시될 짧은 설명",
-  content: bookReview,
-  bookTitle: "책 제목",
-  bookAuthor: "저자",
-  rating: 4
-}
+독후감 본문을 Markdown으로 작성합니다.
 ```

@@ -1,3 +1,15 @@
+---
+slug: clean-code-review
+title: 『클린 코드』를 읽고
+date: 2026-08-29
+category: book-review
+tags: [book, clean-code, review]
+summary: 가독성 좋은 코드를 쓰는 습관에 대해 다시 생각하게 해준 책.
+bookTitle: 클린 코드
+bookAuthor: 로버트 C. 마틴
+rating: 4
+---
+
 # 읽게 된 계기
 
 코드 리뷰 중에 "가독성"과 "의도"에 대한 이야기가 자주 나와서, 관련해서 정리가 잘 된 책을 찾다가 읽게 되었습니다.

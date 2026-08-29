@@ -1,3 +1,12 @@
+---
+slug: react-typescript-blog
+title: 블로그를 React와 TypeScript로 바꾸며
+date: 2026-06-13
+category: blog
+tags: [react, typescript, vite, github-pages]
+summary: GitHub Pages 블로그를 Jekyll에서 React + TypeScript + Vite 구조로 전환한 첫 기록입니다.
+---
+
 # 블로그를 React와 TypeScript로 바꾸며
 
 GitHub Pages 블로그를 Jekyll에서 React와 TypeScript 기반 구조로 바꿨습니다.
