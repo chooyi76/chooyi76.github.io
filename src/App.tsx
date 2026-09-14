@@ -17,12 +17,23 @@ const CATEGORY_LABELS: Record<string, string> = {
 const categoryLabel = (category: string) =>
   CATEGORY_LABELS[category] ?? category;
 
-const RatingStars = ({ rating }: { rating: number }) => (
-  <span className="rating-stars" aria-label={`평점 ${rating}/5`}>
-    {"★".repeat(rating)}
-    {"☆".repeat(Math.max(0, 5 - rating))}
-  </span>
-);
+const RatingStars = ({ rating }: { rating: number }) => {
+  const fillPercent = Math.max(0, Math.min(100, (rating / 5) * 100));
+
+  return (
+    <span className="rating-stars" aria-label={`평점 ${rating}/5`}>
+      <span className="rating-stars-track" aria-hidden="true">
+        ☆☆☆☆☆
+        <span
+          className="rating-stars-fill"
+          style={{ width: `${fillPercent}%` }}
+        >
+          ★★★★★
+        </span>
+      </span>
+    </span>
+  );
+};
 
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat("ko-KR", {
@@ -139,19 +150,28 @@ function App() {
             <p className="post-summary">{selectedPost.summary}</p>
             {selectedPost.category === "book-review" && (
               <div className="book-info">
-                {selectedPost.bookTitle && (
-                  <span className="book-info-title">
-                    {selectedPost.bookTitle}
-                  </span>
+                {selectedPost.cover && (
+                  <img
+                    className="book-cover"
+                    src={selectedPost.cover}
+                    alt={`${selectedPost.bookTitle ?? selectedPost.title} 표지`}
+                  />
                 )}
-                {selectedPost.bookAuthor && (
-                  <span className="book-info-author">
-                    {selectedPost.bookAuthor}
-                  </span>
-                )}
-                {selectedPost.rating != null && (
-                  <RatingStars rating={selectedPost.rating} />
-                )}
+                <div className="book-info-text">
+                  {selectedPost.bookTitle && (
+                    <span className="book-info-title">
+                      {selectedPost.bookTitle}
+                    </span>
+                  )}
+                  {selectedPost.bookAuthor && (
+                    <span className="book-info-author">
+                      {selectedPost.bookAuthor}
+                    </span>
+                  )}
+                  {selectedPost.rating != null && (
+                    <RatingStars rating={selectedPost.rating} />
+                  )}
+                </div>
               </div>
             )}
             <div className="tag-row" aria-label="Selected post tags">
@@ -245,10 +265,15 @@ function PostCard({ post }: { post: BlogPost }) {
       </span>
       <h3>{post.title}</h3>
       {post.category === "book-review" && post.bookTitle && (
-        <p className="post-card-book">
-          {post.bookTitle}
-          {post.bookAuthor ? ` · ${post.bookAuthor}` : ""}
-        </p>
+        <div className="post-card-book-row">
+          {post.cover && (
+            <img className="post-card-cover" src={post.cover} alt="" />
+          )}
+          <p className="post-card-book">
+            {post.bookTitle}
+            {post.bookAuthor ? ` · ${post.bookAuthor}` : ""}
+          </p>
+        </div>
       )}
       <p>{post.summary}</p>
       <span className="post-card-link">읽기</span>

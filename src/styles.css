@@ -213,12 +213,27 @@ input {
 
 .book-info {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 14px;
   color: #405260;
   font-size: 0.95rem;
+}
+
+.book-cover {
+  width: 84px;
+  height: 120px;
+  border: 1px solid rgba(38, 50, 56, 0.14);
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.book-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 2px;
 }
 
 .book-info-title {
@@ -231,8 +246,21 @@ input {
 }
 
 .rating-stars {
-  color: #b45309;
   letter-spacing: 1px;
+}
+
+.rating-stars-track {
+  position: relative;
+  display: inline-block;
+  color: rgba(180, 83, 9, 0.35);
+}
+
+.rating-stars-fill {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #b45309;
 }
 
 .tag {
@@ -400,8 +428,24 @@ input {
   line-height: 1.6;
 }
 
-.post-card p.post-card-book {
-  margin: 0 0 8px;
+.post-card-book-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.post-card-cover {
+  width: 32px;
+  height: 46px;
+  border: 1px solid rgba(38, 50, 56, 0.14);
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.post-card-book-row p.post-card-book {
+  margin: 0;
   color: #b45309;
   font-size: 0.85rem;
   font-weight: 700;

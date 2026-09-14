@@ -71,3 +71,26 @@ rating: 4
 
 독후감 본문을 Markdown으로 작성합니다.
 ```
+
+### ISBN으로 표지/제목/저자 자동으로 채우기
+
+카카오 책 검색 API에서 정보를 가져와 위 frontmatter가 채워진 파일을 자동으로 생성합니다.
+
+**최초 1회 설정**
+
+1. [카카오 디벨로퍼스](https://developers.kakao.com)에서 애플리케이션을 하나 만듭니다.
+2. 앱의 REST API 키를 확인합니다.
+3. 프로젝트 루트에 `.env.local` 파일을 만들고 아래처럼 작성합니다 (git에 커밋되지 않습니다).
+
+   ```
+   KAKAO_REST_API_KEY=발급받은키
+   ```
+
+**사용법**
+
+```bash
+npm run new-book -- <ISBN 또는 책 제목>
+```
+
+`src/content/posts/book-<ISBN>.md` 파일이 생성되며, `title`/`bookTitle`/`bookAuthor`/`cover`/`isbn`이
+자동으로 채워집니다. `summary`, `rating`, 본문은 직접 작성해서 채운 뒤 커밋하면 됩니다.
