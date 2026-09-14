@@ -31,7 +31,7 @@ function parseFrontmatter(raw: string): {
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean);
-    } else if (/^\d+$/.test(rawValue)) {
+    } else if (/^\d+(\.\d+)?$/.test(rawValue)) {
       data[key] = Number(rawValue);
     } else {
       data[key] = rawValue.replace(/^"(.*)"$/, "$1");

@@ -246,8 +246,21 @@ input {
 }
 
 .rating-stars {
-  color: #b45309;
   letter-spacing: 1px;
+}
+
+.rating-stars-track {
+  position: relative;
+  display: inline-block;
+  color: rgba(180, 83, 9, 0.35);
+}
+
+.rating-stars-fill {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #b45309;
 }
 
 .tag {

@@ -17,12 +17,23 @@ const CATEGORY_LABELS: Record<string, string> = {
 const categoryLabel = (category: string) =>
   CATEGORY_LABELS[category] ?? category;
 
-const RatingStars = ({ rating }: { rating: number }) => (
-  <span className="rating-stars" aria-label={`평점 ${rating}/5`}>
-    {"★".repeat(rating)}
-    {"☆".repeat(Math.max(0, 5 - rating))}
-  </span>
-);
+const RatingStars = ({ rating }: { rating: number }) => {
+  const fillPercent = Math.max(0, Math.min(100, (rating / 5) * 100));
+
+  return (
+    <span className="rating-stars" aria-label={`평점 ${rating}/5`}>
+      <span className="rating-stars-track" aria-hidden="true">
+        ☆☆☆☆☆
+        <span
+          className="rating-stars-fill"
+          style={{ width: `${fillPercent}%` }}
+        >
+          ★★★★★
+        </span>
+      </span>
+    </span>
+  );
+};
 
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat("ko-KR", {
