@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { posts } from "./data/posts";
 import type { BlogPost } from "./types/blog";
 
+// `#/posts/<slug>`면 글 화면, 그 외(`#/`, `#about` 등)는 목록 화면
 const getSlugFromHash = () => {
   const match = window.location.hash.match(/^#\/posts\/([^/]+)/);
-  return match?.[1] ?? posts[0]?.slug ?? "";
+  return match?.[1] ?? null;
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -47,12 +48,22 @@ function App() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeTag, setActiveTag] = useState("all");
   const [query, setQuery] = useState("");
+  const previousSlug = useRef(selectedSlug);
 
   useEffect(() => {
     const syncRoute = () => setSelectedSlug(getSlugFromHash());
     window.addEventListener("hashchange", syncRoute);
     return () => window.removeEventListener("hashchange", syncRoute);
   }, []);
+
+  // 화면(목록 ↔ 글, 글 ↔ 글)이 바뀐 직후 항상 맨 위에서 시작.
+  // 렌더링 뒤에 즉시 이동하므로 스크롤 애니메이션이 레이아웃 변경에 끊기지 않음.
+  useLayoutEffect(() => {
+    if (previousSlug.current !== selectedSlug) {
+      window.scrollTo(0, 0);
+      previousSlug.current = selectedSlug;
+    }
+  }, [selectedSlug]);
 
   const sortedPosts = useMemo(
     () =>
@@ -91,7 +102,9 @@ function App() {
   }, [activeCategory, activeTag, query, sortedPosts]);
 
   const selectedPost =
-    sortedPosts.find((post) => post.slug === selectedSlug) ?? sortedPosts[0];
+    selectedSlug === null
+      ? undefined
+      : sortedPosts.find((post) => post.slug === selectedSlug);
 
   return (
     <>
@@ -104,7 +117,7 @@ function App() {
           </span>
         </a>
         <nav aria-label="Primary navigation">
-          <a href="#posts">Posts</a>
+          <a href="#/">Posts</a>
           <a href="#about">About</a>
           <a href="https://github.com/chooyi76" target="_blank" rel="noreferrer">
             GitHub
@@ -139,138 +152,138 @@ function App() {
         </aside>
 
         <section className="content-column" aria-label="Blog content">
-          <article className="post-view">
-            <div className="post-kicker">
-              <span>{categoryLabel(selectedPost.category)}</span>
-              <time dateTime={selectedPost.date}>
-                {formatDate(selectedPost.date)}
-              </time>
-            </div>
-            <h2>{selectedPost.title}</h2>
-            <p className="post-summary">{selectedPost.summary}</p>
-            {selectedPost.category === "book-review" && (
-              <div className="book-info">
-                {selectedPost.cover && (
-                  <img
-                    className="book-cover"
-                    src={selectedPost.cover}
-                    alt={`${selectedPost.bookTitle ?? selectedPost.title} 표지`}
-                  />
-                )}
-                <div className="book-info-text">
-                  {selectedPost.bookTitle && (
-                    <span className="book-info-title">
-                      {selectedPost.bookTitle}
-                    </span>
-                  )}
-                  {selectedPost.bookAuthor && (
-                    <span className="book-info-author">
-                      {selectedPost.bookAuthor}
-                    </span>
-                  )}
-                  {selectedPost.rating != null && (
-                    <RatingStars rating={selectedPost.rating} />
-                  )}
+          {selectedSlug === null ? (
+            <section className="post-index" id="posts" aria-label="Post list">
+              <div className="section-heading">
+                <div>
+                  <p className="eyebrow">Archive</p>
+                  <h2>글 목록</h2>
                 </div>
+                <label className="search-field">
+                  <span>검색</span>
+                  <input
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="제목, 태그, 요약 검색"
+                    type="search"
+                  />
+                </label>
               </div>
-            )}
-            <div className="tag-row" aria-label="Selected post tags">
-              {selectedPost.tags.map((tag) => (
-                <span className="tag" key={tag}>
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <div className="markdown-body">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {selectedPost.content}
-              </ReactMarkdown>
-            </div>
-          </article>
 
-          <section className="post-index" id="posts" aria-label="Post list">
-            <div className="section-heading">
-              <div>
-                <p className="eyebrow">Archive</p>
-                <h2>글 목록</h2>
-              </div>
-              <label className="search-field">
-                <span>검색</span>
-                <input
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder="제목, 태그, 요약 검색"
-                  type="search"
-                />
-              </label>
-            </div>
-
-            <div className="filter-row" aria-label="Category filters">
-              <button
-                className={activeCategory === "all" ? "active" : ""}
-                onClick={() => setActiveCategory("all")}
-                type="button"
-              >
-                전체
-              </button>
-              {categories.map((category) => (
+              <div className="filter-row" aria-label="Category filters">
                 <button
-                  className={activeCategory === category ? "active" : ""}
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
+                  className={activeCategory === "all" ? "active" : ""}
+                  onClick={() => setActiveCategory("all")}
                   type="button"
                 >
-                  {categoryLabel(category)}
+                  전체
                 </button>
-              ))}
-            </div>
+                {categories.map((category) => (
+                  <button
+                    className={activeCategory === category ? "active" : ""}
+                    key={category}
+                    onClick={() => setActiveCategory(category)}
+                    type="button"
+                  >
+                    {categoryLabel(category)}
+                  </button>
+                ))}
+              </div>
 
-            <div className="filter-row" aria-label="Tag filters">
-              <button
-                className={activeTag === "all" ? "active" : ""}
-                onClick={() => setActiveTag("all")}
-                type="button"
-              >
-                전체
-              </button>
-              {tags.map((tag) => (
+              <div className="filter-row" aria-label="Tag filters">
                 <button
-                  className={activeTag === tag ? "active" : ""}
-                  key={tag}
-                  onClick={() => setActiveTag(tag)}
+                  className={activeTag === "all" ? "active" : ""}
+                  onClick={() => setActiveTag("all")}
                   type="button"
                 >
-                  {tag}
+                  전체
                 </button>
-              ))}
-            </div>
+                {tags.map((tag) => (
+                  <button
+                    className={activeTag === tag ? "active" : ""}
+                    key={tag}
+                    onClick={() => setActiveTag(tag)}
+                    type="button"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
 
-            <div className="post-grid">
-              {filteredPosts.map((post) => (
-                <PostCard key={post.slug} post={post} />
-              ))}
-            </div>
-          </section>
+              <div className="post-grid">
+                {filteredPosts.map((post) => (
+                  <PostCard key={post.slug} post={post} />
+                ))}
+              </div>
+            </section>
+          ) : selectedPost ? (
+            <PostView post={selectedPost} />
+          ) : (
+            <section className="post-view">
+              <a className="back-link" href="#/">
+                ← 목록으로
+              </a>
+              <h2>글을 찾을 수 없어요</h2>
+              <p className="post-summary">
+                주소가 잘못되었거나 삭제된 글이에요.
+              </p>
+            </section>
+          )}
         </section>
       </main>
     </>
   );
 }
 
-const scrollToTop = () => {
-  const reduceMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
-  window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
-};
+function PostView({ post }: { post: BlogPost }) {
+  return (
+    <article className="post-view">
+      <a className="back-link" href="#/">
+        ← 목록으로
+      </a>
+      <div className="post-kicker">
+        <span>{categoryLabel(post.category)}</span>
+        <time dateTime={post.date}>{formatDate(post.date)}</time>
+      </div>
+      <h2>{post.title}</h2>
+      <p className="post-summary">{post.summary}</p>
+      {post.category === "book-review" && (
+        <div className="book-info">
+          {post.cover && (
+            <img
+              className="book-cover"
+              src={post.cover}
+              alt={`${post.bookTitle ?? post.title} 표지`}
+            />
+          )}
+          <div className="book-info-text">
+            {post.bookTitle && (
+              <span className="book-info-title">{post.bookTitle}</span>
+            )}
+            {post.bookAuthor && (
+              <span className="book-info-author">{post.bookAuthor}</span>
+            )}
+            {post.rating != null && <RatingStars rating={post.rating} />}
+          </div>
+        </div>
+      )}
+      <div className="tag-row" aria-label="Selected post tags">
+        {post.tags.map((tag) => (
+          <span className="tag" key={tag}>
+            {tag}
+          </span>
+        ))}
+      </div>
+      <div className="markdown-body">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+      </div>
+    </article>
+  );
+}
 
 function PostCard({ post }: { post: BlogPost }) {
   return (
-    <a
-      className="post-card"
-      href={`#/posts/${post.slug}`}
-      onClick={scrollToTop}
-    >
+    <a className="post-card" href={`#/posts/${post.slug}`}>
       <span className="post-card-date">
         {categoryLabel(post.category)} · {formatDate(post.date)}
       </span>
