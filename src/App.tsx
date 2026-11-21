@@ -257,9 +257,20 @@ function App() {
   );
 }
 
+const scrollToTop = () => {
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+};
+
 function PostCard({ post }: { post: BlogPost }) {
   return (
-    <a className="post-card" href={`#/posts/${post.slug}`}>
+    <a
+      className="post-card"
+      href={`#/posts/${post.slug}`}
+      onClick={scrollToTop}
+    >
       <span className="post-card-date">
         {categoryLabel(post.category)} · {formatDate(post.date)}
       </span>
